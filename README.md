@@ -4,23 +4,19 @@
 ![](https://img.shields.io/badge/license-MIT-000000.svg)
 [![arXiv](https://img.shields.io/badge/arXiv-1909.05658-<color>.svg)](https://arxiv.org/abs/2202.06335)
 
-**Note:**
-- ⭐ **Please leave a <font color='orange'>STAR</font> if you like this project!** ⭐
-- If you find any <font color='red'>incorrect</font> / <font color='red'>inappropriate</font> / <font color='red'>outdated</font> content, please kindly consider opening an issue or a PR. 
 
-**The repository of ET-BERT, a network traffic classification model on encrypted traffic.**
+**暗号化されたトラフィックのネットワーク トラフィック分類モデルである ET-BERT のリポジトリ。**
 
-ET-BERT is a method for learning datagram contextual relationships from encrypted traffic, which could be **directly applied to different encrypted traffic scenarios and accurately identify classes of traffic**. First, ET-BERT employs multi-layer attention in large scale unlabelled traffic to learn both inter-datagram contextual and inter-traffic transport relationships. Second, ET-BERT could be applied to a specific scenario to identify traffic types by fine-tuning the labeled encrypted traffic on a small scale.
-
+ET-BERT は、暗号化されたトラフィックからデータグラムのコンテキスト関係を学習する方法であり、**さまざまな暗号化トラフィック シナリオに直接適用して、トラフィックのクラスを正確に識別する**ことができます。まず、ET-BERT は大規模なラベルのないトラフィックでマルチレイヤー アテンションを使用して、データグラム間のコンテキストとトラフィック間のトランスポート関係の両方を学習します。次に、ET-BERT を特定のシナリオに適用して、ラベル付きの暗号化されたトラフィックを小規模に微調整することで、トラフィックの種類を識別できます。
 ![The framework of ET-BERT](images/etbert.png)
 
-The work is introduced in the *[31st The Web Conference](https://www2022.thewebconf.org/)*:
-> Xinjie Lin, Gang Xiong, Gaopeng Gou, Zhen Li, Junzheng Shi and Jing Yu. 2022. ET-BERT: A Contextualized Datagram Representation with Pre-training Transformers for Encrypted Traffic Classification. In Proceedings of The Web Conference (WWW) 2022, Lyon, France. Association for Computing Machinery. 
+*[第31回 The Web Conference](https://www2022.thewebconf.org/)*で作品が紹介されました。
+> Xinjie Lin、Gang Xiong、Gaopeng Gou、Zhen Li、Junzheng Shi、Jing Yu。 2022. ET-BERT: 暗号化されたトラフィック分類のための事前トレーニング トランスフォーマーによるコンテキスト化されたデータグラム表現。 Web Conference (WWW) 2022、フランス、リヨンの議事録。コンピューティング機械協会。
 
-Note: this code is based on [UER-py](https://github.com/dbiir/UER-py). Many thanks to the authors.
+注: このコードは [UER-py](https://github.com/dbiir/UER-py) に基づいています。著者に感謝します。
 <br/>
 
-Table of Contents
+目次
 =================
   * [Requirements](#requirements)
   * [Datasets](#datasets)
@@ -30,7 +26,7 @@ Table of Contents
   * [Contact](#contact)
 <br/>
 
-## Requirements
+## Requirements(実験要件)
 * Python >= 3.6
 * CUDA: 11.4
 * GPU: Tesla V100S
@@ -44,26 +40,32 @@ Table of Contents
 * tshark
 * [SplitCap](https://www.netresec.com/?page=SplitCap)
 * [scikit-learn](https://scikit-learn.org/stable/)
-* For the mixed precision training you will need apex from NVIDIA
-* For the pre-trained model conversion (related with TensorFlow) you will need TensorFlow
-* For the tokenization with wordpiece model you will need [WordPiece](https://github.com/huggingface/tokenizers)
-* For the use of CRF in sequence labeling downstream task you will need [pytorch-crf](https://github.com/kmkurn/pytorch-crf)
+*混合精度トレーニングには、NVIDIA の apex が必要です
+*事前トレーニング済みのモデル変換 (TensorFlow に関連) には、TensorFlow が必要です。
+※wordpieceモデルでのトークン化には【WordPiece】(https://github.com/huggingface/tokenizers)が必要です。
+*シークエンス ラベリング ダウンストリーム タスクで CRF を使用するには、[pytorch-crf](https://github.com/kmkurn/pytorch-crf) が必要です。
+
+**また、必要なpythonライブラリはrequirements.txtに纏めてある為、以下のコマンドで一括インストールが可能です。**
+```
+pip install -r requirements.txt
+```
 <br/>
 
-## Datasets
-The real-world TLS 1.3 dataset is collected from March to July 2021 on China Science and Technology Network (CSTNET). For privacy considerations, we only release the anonymous data (see in [CSTNET-TLS 1.3](CSTNET-TLS%201.3/readme.md)).
 
-Other datasets we used for comparison experiments are publicly available, see the [paper](https://arxiv.org/abs/2202.06335) for more details. If you want to use your own data, please check if the data format is the same as `datasets/cstnet-tls1.3/` and specify the data path in `data_process/`.
+## datasets(データセット)
+実際の TLS 1.3 データセットは、中国科学技術ネットワーク (CSTNET) で 2021 年 3 月から 7 月まで収集されます。プライバシーを考慮して、匿名データのみを公開します ([CSTNET-TLS 1.3](CSTNET-TLS%201.3/readme.md) を参照)。
+
+比較実験に使用した他のデータセットは公開されています。詳細については、[論文](https://arxiv.org/abs/2202.06335) を参照してください。独自のデータを使用する場合は、データ形式が「datasets/cstnet-tls1.3/」と同じであることを確認し、「data_process/」でデータ パスを指定してください。
 
 <br/>
 
-## Using ET-BERT
-You can now use ET-BERT directly through the pre-trained [model](https://drive.google.com/file/d/1r1yE34dU2W8zSqx1FkB8gCWri4DQWVtE/view?usp=sharing) or download via:
+## Using ET-BERT(ET-BERTを使用する)
+事前トレーニング済みの ET-BERT を直接使用できるようになりました [model](https://drive.google.com/file/d/1r1yE34dU2W8zSqx1FkB8gCWri4DQWVtE/view?usp=sharing) or download via:
 ```
 wget -O pretrained_model.bin https://drive.google.com/file/d/1r1yE34dU2W8zSqx1FkB8gCWri4DQWVtE/view?usp=sharing
 ```
 
-After obtaining the pre-trained model, ET-BERT could be applied to the spetic task by fine-tuning at packet-level with labeled network traffic:
+事前トレーニング済みのモデルを取得した後、ラベル付けされたネットワーク トラフィックを使用してパケット レベルで微調整することにより、ET-BERT をスペティック タスクに適用できます。
 ```
 python3 fine-tuning/run_classifier.py --pretrained_model_path models/pre-trained_model.bin \
                                    --vocab_path models/encryptd_vocab.txt \
@@ -75,7 +77,7 @@ python3 fine-tuning/run_classifier.py --pretrained_model_path models/pre-trained
                                    --seq_length 128 --learning_rate 2e-5
 ```
 
-The default path of the fine-tuned classifier model is `models/finetuned_model.bin`. Then you can do inference with the fine-tuned model:
+微調整された分類子モデルのデフォルト パスは、`models/finetuned_model.bin` です。次に、微調整されたモデルで推論を行うことができます。
 ```
 python3 inference/run_classifier_infer.py --load_model_path models/finetuned_model.bin \
                                           --vocab_path models/encryptd_vocab.txt \
@@ -86,32 +88,44 @@ python3 inference/run_classifier_infer.py --load_model_path models/finetuned_mod
 ```
 <br/>
 
-## Reproduce ET-BERT
-### Pre-process
-To reproduce the steps necessary to pre-train ET-BERT on network traffic data, follow the following steps:
- 1. Run `vocab_process/main.py` to generate the encrypted traffic corpus or directly use the generated corpus in `corpora/`. Note you'll need to change the file paths and some configures at the top of the file.
- 2. Run `main/preprocess.py` to pre-process the encrypted traffic burst corpus.
-    ```
-       python3 preprocess.py --corpus_path corpora/encrypted_traffic_burst.txt \
-                             --vocab_path models/encryptd_vocab.txt \
-                             --dataset_path dataset.pt --processes_num 8 --target bert
-    ```
- 3. Run `data_process/main.py` to generate the data for downstream tasks if there is a dataset in pcap format that needs to be processed. This process includes two steps. The first is to split pcap files by setting `splitcap=True` in `datasets/main.py:54`  and save as `npy` datasets. Then the second is to generate the fine-tuning data. If you use the shared datasets, then you need to create a folder under the `dataset_save_path` named `dataset` and copy the datasets here.
-
-### Pre-training
-To reproduce the steps necessary to finetune ET-BERT on labeled data, run `pretrain.py` to pre-train.
+## Reproduce ET-BERT(ET-BERTを再現する)
+### Pre-process(事前処理)
+ネットワーク トラフィック データで ET-BERT を事前トレーニングするために必要な手順を再現するには、次の手順に従います。
+ 1. `vocab_process/main.py` を実行して、暗号化されたトラフィック コーパスを生成するか、生成されたコーパスを `corpora/` で直接使用します。ファイル パスを変更し、ファイルの先頭にあるいくつかの設定を変更する必要があることに注意してください。
+ 2. `main/preprocess.py` を実行して、暗号化されたトラフィック バースト コーパスを前処理します。
+ **Linuxでは以下のコマンドを実行**
 ```
-   python3 pre-training/pretrain.py --dataset_path dataset.pt --vocab_path models/encryptd_vocab.txt \
-                       --output_model_path models/pre-trained_model.bin \
-                       --world_size 8 --gpu_ranks 0 1 2 3 4 5 6 7 \
-                       --total_steps 500000 --save_checkpoint_steps 10000 --batch_size 32 \
-                       --embedding word_pos_seg --encoder transformer --mask fully_visible --target bert
+python3 preprocess.py --corpus_path corpora/encrypted_traffic_burst.txt \
+                      --vocab_path models/encryptd_vocab.txt \
+                     --dataset_path dataset.pt --processes_num 8 --target bert
+```  
+
+ **Windowsでは以下のコマンドを実行**
+```
+python3 preprocess.py --corpus_path corpora/encrypted_traffic_burst.txt --vocab_path models/encryptd_vocab.txt --dataset_path dataset.pt --processes_num 8 --target bert
 ```
 
-### Fine-tuning on downstream tasks
-To see an example of how to use ET-BERT for the encrypted traffic classification tasks, go to the [Using ET-BERT](#using-et-bert) and `run_classifier.py` script in the `fine-tuning` folder.
+3. 処理が必要な pcap 形式のデータセットがある場合は、`data_process/main.py` を実行してダウンストリーム タスク用のデータを生成します。このプロセスには 2 つのステップが含まれます。 1 つ目は、「datasets/main.py:54」で「splitcap=True」を設定して pcap ファイルを分割し、「npy」データセットとして保存することです。次に、微調整データの生成です。共有データセットを使用する場合は、「dataset_save_path」の下に「dataset」という名前のフォルダーを作成し、ここにデータセットをコピーする必要があります。
 
-Note: you'll need to change the path in programes.
+### Pre-training(事前トレーニング)
+ラベル付きデータで ET-BERT を微調整するために必要な手順を再現するには、「pretrain.py」を実行して事前トレーニングします。
+ **Linuxでは以下のコマンドを実行**
+```
+python3 pre-training/pretrain.py --dataset_path dataset.pt --vocab_path models/encryptd_vocab.txt \
+                    --output_model_path models/pre-trained_model.bin \
+                    --world_size 8 --gpu_ranks 0 1 2 3 4 5 6 7 \
+                    --total_steps 500000 --save_checkpoint_steps 10000 --batch_size 32 \
+                    --embedding word_pos_seg --encoder transformer --mask fully_visible --target bert
+```
+
+ **Windowsでは以下のコマンドを実行**
+```
+python3 pre-training/pretrain.py --dataset_path dataset.pt --vocab_path models/encryptd_vocab.txt --output_modelpath models/pre-trained_model.bin --world_size 8 --gpu_ranks 0 1 2 3 4 5 6 7 --total_steps 500000 --save_checkpoint_steps 10000 --batch_size 32 --embedding word_pos_seg --encoder transformer --mask fully_visible --target bert
+```
+### Fine-tuning on downstream tasks(ダウンストリーム タスクの微調整)
+暗号化されたトラフィック分類タスクに ET-BERT を使用する方法の例を確認するには、[Using ET-BERT](#using-et-bert) および `fine-tuning` フォルダの `run_classifier.py` スクリプトに移動します。 
+
+注: プログラムのパスを変更する必要があります。
 <br/>
 
 ## Citation
@@ -143,8 +157,8 @@ Note: you'll need to change the path in programes.
   doi       = {10.1145/3485447.3512217}
 }
 ```
-
 <br/>
+
 
 ## Contact
 Please post a Github issue if you have any questions.
