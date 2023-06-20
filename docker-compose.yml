@@ -4,10 +4,12 @@ services:
     build:
       context: .
       dockerfile: dockerfile
+    environment:
+      - ENV_VAR=value
     env_file:
       - proxy.env
     volumes:
-      - ./ET-BERT_rep:/tmp/ET-BERT_rep
+      - ./ET-BERT:/ET-BERT
     command: /bin/bash
     tty: true
     stop_signal: SIGINT
