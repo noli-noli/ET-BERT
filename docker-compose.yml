@@ -1,0 +1,18 @@
+version: "3"
+services:
+  gp20a051_cuda-11-4:
+    build:
+      context: .
+      dockerfile: dockerfile
+    env_file:
+      - proxy.env
+    volumes:
+      - ./ET-BERT_rep:/tmp/ET-BERT_rep
+    command: /bin/bash
+    tty: true
+    stop_signal: SIGINT
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]

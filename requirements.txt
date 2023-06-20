@@ -1,9 +1,0 @@
-torch>=1.0
-argparse
-six>=1.12.0
-packaging
-#以下Pre-process(事前処理)の1章(コーパス生成)で使用されるライブラリ
-scapy
-tokenizers
-scikit-learn
-flowcontainer
