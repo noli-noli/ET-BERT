@@ -1,2 +1,3 @@
 *.tsv
-proxy.env
+*.zip
+./proxy.env

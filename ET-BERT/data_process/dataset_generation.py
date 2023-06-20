@@ -319,7 +319,17 @@ def get_feature_flow(label_pcap, payload_len, payload_pac):
     return feature_data
 
 def generation(pcap_path, samples, features, splitcap = False, payload_length = 128, payload_packet = 5, dataset_save_path = "I:\\ex_results\\", dataset_level = "flow"):
+    #pcap_path：PCAPファイルのパス
+    #samples：サンプル数
+    #features：特徴量
+    #splitcap：分割キャプチャの有無（デフォルトはFalse）
+    #payload_length：ペイロードの長さ（デフォルトは128）
+    #payload_packet：ペイロードのパケット数（デフォルトは5）
+    #dataset_save_path：データセットの保存先パス（デフォルトは"I:\ex_results\"）
+    #dataset_level：データセットのレベル（デフォルトは"flow"）
+
     if os.path.exists(dataset_save_path + "dataset.json"):
+        #dataset_save_pathに指定されたパスに、dataset.jsonが存在するかをチェックします。もし存在する場合は、処理が終了し、メッセージを表示します。
         print("the pcap file of %s is finished generating."%pcap_path)
         
         clean_dataset = 0
@@ -327,6 +337,9 @@ def generation(pcap_path, samples, features, splitcap = False, payload_length = 
         re_write = 0
 
         if clean_dataset:
+        #clean_datasetフラグやre_writeフラグに基づいて、データセットを整理または再書き込みします。
+        #clean_datasetが真の場合は、既存のデータセットから特定のキーを削除します。
+
             with open(dataset_save_path + "\\dataset.json", "r") as f:
                 new_dataset = json.load(f)
             pop_keys = ['1','10','16','23','25','71']
@@ -341,7 +354,9 @@ def generation(pcap_path, samples, features, splitcap = False, payload_length = 
                 new_dataset[pop_keys[c_k_index]] = new_dataset.pop(change_keys[c_k_index])
             with open(dataset_save_path + "\\dataset.json", "w") as f:
                 json.dump(new_dataset, fp=f, ensure_ascii=False, indent=4)
+
         elif re_write:
+            #re_writeが真の場合は、既存のデータセットを新しいファイル名で再書き込みします。
             with open(dataset_save_path + "\\dataset.json", "r") as f:
                 old_dataset = json.load(f)
             os.renames(dataset_save_path + "\\dataset.json", dataset_save_path + "\\old_dataset.json")
@@ -367,8 +382,12 @@ def generation(pcap_path, samples, features, splitcap = False, payload_length = 
     session_pcap_path  = {}
 
     for parent, dirs, files in os.walk(pcap_path):
+    #PCAPファイルのディレクトリを再帰的に探索し、ラベルごとにセッションのPCAPパスを取得します。
         if label_name_list == []:
+            #ディレクトリ内のサブディレクトリ名をラベル名として収集し、label_name_listに格納します。
             label_name_list.extend(dirs)
+        #確認用print
+        #print("check" + label_name_list)
 
         tls13 = 0
         if tls13:
@@ -386,7 +405,9 @@ def generation(pcap_path, samples, features, splitcap = False, payload_length = 
 
         for dir in label_name_list:
             for p,dd,ff in os.walk(parent + "\\" + dir):
-                
+                #label_name_list内の各要素（ラベル名）に対してループを実行します。
+                #os.walk()関数を使用して、parent + "\\" + dirというパス（現在のラベルのディレクトリパス）を再帰的に探索します。
+                #os.walk()から返される各ディレクトリ（p）、サブディレクトリ（dd）、ファイル（ff）に対してループを実行します。
                 if splitcap:
                     for file in ff:
                         session_path = (split_cap(pcap_path, p + "\\" + file, file.split(".")[-2], dir, dataset_level = dataset_level))
