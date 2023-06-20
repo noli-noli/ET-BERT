@@ -22,23 +22,28 @@ import data_preprocess
 import open_dataset_deal
 
 _category = 120 # dataset class
-dataset_dir = "I:\\datasets\\" # ダインチューニングのためのデータセットを保存するためのパス
+dataset_dir = "../datasets/" # ダインチューニングのためのデータセットを保存するためのパス
 
-pcap_path, dataset_save_path, samples, features, dataset_level = "I:\\cstnet-tls1.3\\packet\\splitcap\\", "I:\\cstnet-tls1.3\\packet\\result\\", [5000], ["payload"], "packet"
+pcap_path, dataset_save_path, samples, features, dataset_level = "../datasets/VPN/packet/", "../datasets/VPN/result/", [14], ["payload"], "packet"
 
+##実験コード##
+#print(os.path.isdir(pcap_path))
+#print(os.path.isdir(dataset_save_path))
+#print(os.path.isdir(dataset_save_path + "dataset/"))
+#############
 def dataset_extract(model):
     
     X_dataset = {}
     Y_dataset = {}
 
     try:
-        if os.listdir(dataset_save_path + "dataset\\"):
-            print("Reading dataset from %s ..." % (dataset_save_path + "dataset\\"))
+        if os.listdir(dataset_save_path + "dataset/"):
+            print("Reading dataset from %s ..." % (dataset_save_path + "dataset/"))
             
             x_payload_train, x_payload_test, x_payload_valid,\
             y_train, y_test, y_valid = \
-                np.load(dataset_save_path + "dataset\\x_datagram_train.npy",allow_pickle=True), np.load(dataset_save_path + "dataset\\x_datagram_test.npy",allow_pickle=True), np.load(dataset_save_path + "dataset\\x_datagram_valid.npy",allow_pickle=True),\
-                np.load(dataset_save_path + "dataset\\y_train.npy",allow_pickle=True), np.load(dataset_save_path + "dataset\\y_test.npy",allow_pickle=True), np.load(dataset_save_path + "dataset\\y_valid.npy",allow_pickle=True)
+                np.load(dataset_save_path + "dataset/x_datagram_train.npy",allow_pickle=True), np.load(dataset_save_path + "dataset/x_datagram_test.npy",allow_pickle=True), np.load(dataset_save_path + "dataset/x_datagram_valid.npy",allow_pickle=True),\
+                np.load(dataset_save_path + "dataset/y_train.npy",allow_pickle=True), np.load(dataset_save_path + "dataset/y_test.npy",allow_pickle=True), np.load(dataset_save_path + "dataset/y_valid.npy",allow_pickle=True)
             
             X_dataset, Y_dataset = models_deal(model, X_dataset, Y_dataset,
                                                x_payload_train, x_payload_test,
@@ -48,7 +53,7 @@ def dataset_extract(model):
             return X_dataset, Y_dataset
     except Exception as e:
         print(e)
-        print("Dataset directory %s not exist.\nBegin to obtain new dataset."%(dataset_save_path + "dataset\\"))
+        print("Dataset directory %s not exist.\nBegin to obtain new dataset."%(dataset_save_path + "dataset/"))
 
     X,Y = dataset_generation.generation(pcap_path, samples, features, splitcap=False, dataset_save_path=dataset_save_path,dataset_level=dataset_level)
 

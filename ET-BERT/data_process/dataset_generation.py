@@ -319,6 +319,9 @@ def get_feature_flow(label_pcap, payload_len, payload_pac):
     return feature_data
 
 def generation(pcap_path, samples, features, splitcap = False, payload_length = 128, payload_packet = 5, dataset_save_path = "I:\\ex_results\\", dataset_level = "flow"):
+    #確認用
+    #print("##generation##")
+
     #pcap_path：PCAPファイルのパス
     #samples：サンプル数
     #features：特徴量
@@ -340,7 +343,7 @@ def generation(pcap_path, samples, features, splitcap = False, payload_length = 
         #clean_datasetフラグやre_writeフラグに基づいて、データセットを整理または再書き込みします。
         #clean_datasetが真の場合は、既存のデータセットから特定のキーを削除します。
 
-            with open(dataset_save_path + "\\dataset.json", "r") as f:
+            with open(dataset_save_path + "dataset.json", "r") as f:
                 new_dataset = json.load(f)
             pop_keys = ['1','10','16','23','25','71']
             print("delete domains.")
@@ -352,15 +355,15 @@ def generation(pcap_path, samples, features, splitcap = False, payload_length = 
             for c_k_index in range(len(change_keys)):
                 relation_dict[change_keys[c_k_index]] = pop_keys[c_k_index]
                 new_dataset[pop_keys[c_k_index]] = new_dataset.pop(change_keys[c_k_index])
-            with open(dataset_save_path + "\\dataset.json", "w") as f:
+            with open(dataset_save_path + "dataset.json", "w") as f:
                 json.dump(new_dataset, fp=f, ensure_ascii=False, indent=4)
 
         elif re_write:
             #re_writeが真の場合は、既存のデータセットを新しいファイル名で再書き込みします。
-            with open(dataset_save_path + "\\dataset.json", "r") as f:
+            with open(dataset_save_path + "dataset.json", "r") as f:
                 old_dataset = json.load(f)
-            os.renames(dataset_save_path + "\\dataset.json", dataset_save_path + "\\old_dataset.json")
-            with open(dataset_save_path + "\\new-samples.txt", "r") as f:
+            os.renames(dataset_save_path + "dataset.json", dataset_save_path + "old_dataset.json")
+            with open(dataset_save_path + "new-samples.txt", "r") as f:
                 source_samples = f.read().split('\n')
             new_dataset = {}
             samples_count = 0
@@ -370,7 +373,7 @@ def generation(pcap_path, samples, features, splitcap = False, payload_length = 
                     new_dataset[str(samples_count)] = old_dataset[str(i)]
                     samples_count += 1
                     print(old_dataset[str(i)]['samples'])
-            with open(dataset_save_path + "\\dataset.json", "w") as f:
+            with open(dataset_save_path + "dataset.json", "w") as f:
                 json.dump(new_dataset, fp=f, ensure_ascii=False, indent=4)
         X, Y = obtain_data(pcap_path, samples, features, dataset_save_path)
         return X,Y
@@ -381,13 +384,17 @@ def generation(pcap_path, samples, features, splitcap = False, payload_length = 
 
     session_pcap_path  = {}
 
+    
     for parent, dirs, files in os.walk(pcap_path):
     #PCAPファイルのディレクトリを再帰的に探索し、ラベルごとにセッションのPCAPパスを取得します。
+        #確認用
+        #print("check" + parent)
+        #print("check" + str(files))
+        #print(dirs)
         if label_name_list == []:
             #ディレクトリ内のサブディレクトリ名をラベル名として収集し、label_name_listに格納します。
             label_name_list.extend(dirs)
-        #確認用print
-        #print("check" + label_name_list)
+    
 
         tls13 = 0
         if tls13:
@@ -403,15 +410,17 @@ def generation(pcap_path, samples, features, splitcap = False, payload_length = 
                         os.mkdir(current_path)
                     shutil.copyfile(file, os.path.join(current_path, new_name))
 
+
+        print("!!!!!check point 2!!!!!")
         for dir in label_name_list:
-            for p,dd,ff in os.walk(parent + "\\" + dir):
+            for p,dd,ff in os.walk(parent + "/" + dir):
                 #label_name_list内の各要素（ラベル名）に対してループを実行します。
-                #os.walk()関数を使用して、parent + "\\" + dirというパス（現在のラベルのディレクトリパス）を再帰的に探索します。
+                #os.walk()関数を使用して、parent + "/" + dirというパス（現在のラベルのディレクトリパス）を再帰的に探索します。
                 #os.walk()から返される各ディレクトリ（p）、サブディレクトリ（dd）、ファイル（ff）に対してループを実行します。
                 if splitcap:
                     for file in ff:
-                        session_path = (split_cap(pcap_path, p + "\\" + file, file.split(".")[-2], dir, dataset_level = dataset_level))
-                    session_pcap_path[dir] = pcap_path + "\\splitcap\\" + dir
+                        session_path = (split_cap(pcap_path, p + "/" + file, file.split(".")[-2], dir, dataset_level = dataset_level))
+                    session_pcap_path[dir] = pcap_path + "splitcap/" + dir
                 else:
                     session_pcap_path[dir] = pcap_path + dir
         break
@@ -430,11 +439,11 @@ def generation(pcap_path, samples, features, splitcap = False, payload_length = 
             if splitcap:
                 for p, d, f in os.walk(session_pcap_path[key]):
                     for file in f:
-                        file_size = float(size_format(os.path.getsize(p + "\\" + file)))
+                        file_size = float(size_format(os.path.getsize(p + "/" + file)))
                         # 2KB
                         if file_size < 5:
-                            os.remove(p + "\\" + file)
-                            print("remove sample: %s for its size is less than 5 KB." % (p + "\\" + file))
+                            os.remove(p + "/" + file)
+                            print("remove sample: %s for its size is less than 5 KB." % (p + "/" + file))
 
             if label_id[key] not in dataset:
                 dataset[label_id[key]] = {
@@ -449,29 +458,29 @@ def generation(pcap_path, samples, features, splitcap = False, payload_length = 
             if splitcap:# not splitcap
                 for p, d, f in os.walk(session_pcap_path[key]):
                     for file in f:
-                        current_file = p + "\\" + file
+                        current_file = p + "/" + file
                         if not os.path.getsize(current_file):
                             os.remove(current_file)
                             print("current pcap %s is 0KB and delete"%current_file)
                         else:
-                            current_packet = scapy.rdpcap(p + "\\" + file)
-                            file_size = float(size_format(os.path.getsize(p + "\\" + file)))
+                            current_packet = scapy.rdpcap(p + "/" + file)
+                            file_size = float(size_format(os.path.getsize(p + "/" + file)))
                             try:
                                 if 'TCP' in str(current_packet.res):
                                     # 0.12KB
                                     if file_size < 0.14:
-                                        os.remove(p + "\\" + file)
+                                        os.remove(p + "/" + file)
                                         print("remove TCP sample: %s for its size is less than 0.14KB." % (
-                                                    p + "\\" + file))
+                                                    p + "/" + file))
                                 elif 'UDP' in str(current_packet.res):
                                     if file_size < 0.1:
-                                        os.remove(p + "\\" + file)
+                                        os.remove(p + "/" + file)
                                         print("remove UDP sample: %s for its size is less than 0.1KB." % (
-                                                    p + "\\" + file))
+                                                    p + "/" + file))
                             except Exception as e:
                                 print("error in data_generation 611: scapy read pcap and analyse error")
-                                os.remove(p + "\\" + file)
-                                print("remove packet sample: %s for reading error." % (p + "\\" + file))
+                                os.remove(p + "/" + file)
+                                print("remove packet sample: %s for reading error." % (p + "/" + file))
             if label_id[key] not in dataset:
                 dataset[label_id[key]] = {
                     "samples": 0,
@@ -480,7 +489,7 @@ def generation(pcap_path, samples, features, splitcap = False, payload_length = 
         if splitcap:
             continue
 
-        target_all_files = [x[0] + "\\" + y for x in [(p, f) for p, d, f in os.walk(session_pcap_path[key])] for y in x[1]]
+        target_all_files = [x[0] + "/" + y for x in [(p, f) for p, d, f in os.walk(session_pcap_path[key])] for y in x[1]]
         r_files = random.sample(target_all_files, samples[label_count])
         label_count += 1
         for r_f in r_files:
@@ -519,11 +528,11 @@ def generation(pcap_path, samples, features, splitcap = False, payload_length = 
         all_data_number += dataset[label_id[label_name_list[index]]]["samples"]
     print("all\t%d"%(all_data_number))
 
-    with open(dataset_save_path + "\\picked_file_record","w") as p_f:
+    with open(dataset_save_path + "picked_file_record","w") as p_f:
         for i in r_file_record:
             p_f.write(i)
             p_f.write("\n")
-    with open(dataset_save_path + "\\dataset.json", "w") as f:
+    with open(dataset_save_path + "dataset.json", "w") as f:
         json.dump(dataset,fp=f,ensure_ascii=False,indent=4)
 
     X,Y = obtain_data(pcap_path, samples, features, dataset_save_path, json_data = dataset)
@@ -567,7 +576,7 @@ def obtain_data(pcap_path, samples, features, dataset_save_path, json_data = Non
         X,Y = read_data_from_json(json_data,features,samples)
     else:
         print("read dataset from json file.")
-        with open(dataset_save_path + "\\dataset.json","r") as f:
+        with open(dataset_save_path + "dataset.json","r") as f:
             dataset = json.load(f)
         X,Y = read_data_from_json(dataset,features,samples)
 
