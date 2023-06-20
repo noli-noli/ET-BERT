@@ -7,3 +7,7 @@ scapy
 tokenizers
 scikit-learn
 flowcontainer
+#pcap分割用
+xlrd
+pandas
+tqdm
