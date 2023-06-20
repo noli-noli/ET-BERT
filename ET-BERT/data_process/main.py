@@ -22,7 +22,7 @@ import data_preprocess
 import open_dataset_deal
 
 _category = 120 # dataset class
-dataset_dir = "I:\\datasets\\" # the path to save dataset for dine-tuning
+dataset_dir = "I:\\datasets\\" # ダインチューニングのためのデータセットを保存するためのパス
 
 pcap_path, dataset_save_path, samples, features, dataset_level = "I:\\cstnet-tls1.3\\packet\\splitcap\\", "I:\\cstnet-tls1.3\\packet\\result\\", [5000], ["payload"], "packet"
 
@@ -206,11 +206,11 @@ def count_label_number(samples):
 
     for index in range(len(dataset_length)):
         if dataset_length[index] < samples[0]:
-            print("label %s has less sample's number than defined samples %d" % (labels[index], samples[0]))、
+            print("label %s has less sample's number than defined samples %d" % (labels[index], samples[0]))
             new_samples[index] = dataset_length[index]
     return new_samples
 
-if __name__ == '__main__':、
+if __name__ == '__main__':
     open_dataset_not_pcap = 0
     
     if open_dataset_not_pcap:
