@@ -115,18 +115,18 @@ def dataset_extract(model):
             x_payload_test, y_test = \
                 x_payload_test[test_index], y_test[test_index]
 
-    if not os.path.exists(dataset_save_path+"dataset\\"):
-        os.mkdir(dataset_save_path+"dataset\\")
+    if not os.path.exists(dataset_save_path+"dataset/"):
+        os.mkdir(dataset_save_path+"dataset/")
 
-    output_x_payload_train = os.path.join(dataset_save_path + "dataset\\", 'x_datagram_train.npy')
+    output_x_payload_train = os.path.join(dataset_save_path + "dataset/", 'x_datagram_train.npy')
 
-    output_x_payload_test = os.path.join(dataset_save_path + "dataset\\", 'x_datagram_test.npy')
+    output_x_payload_test = os.path.join(dataset_save_path + "dataset/", 'x_datagram_test.npy')
 
-    output_x_payload_valid = os.path.join(dataset_save_path + "dataset\\", 'x_datagram_valid.npy')
+    output_x_payload_valid = os.path.join(dataset_save_path + "dataset/", 'x_datagram_valid.npy')
 
-    output_y_train = os.path.join(dataset_save_path+"dataset\\",'y_train.npy')
-    output_y_test = os.path.join(dataset_save_path + "dataset\\", 'y_test.npy')
-    output_y_valid = os.path.join(dataset_save_path + "dataset\\", 'y_valid.npy')
+    output_y_train = os.path.join(dataset_save_path+"dataset/",'y_train.npy')
+    output_y_test = os.path.join(dataset_save_path + "dataset/", 'y_test.npy')
+    output_y_valid = os.path.join(dataset_save_path + "dataset/", 'y_valid.npy')
 
     np.save(output_x_payload_train, x_payload_train)
     np.save(output_x_payload_test, x_payload_test)
