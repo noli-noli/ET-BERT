@@ -24,6 +24,7 @@ import open_dataset_deal
 _category = 120 # dataset class
 dataset_dir = "../datasets/" # ダインチューニングのためのデータセットを保存するためのパス
 
+#samplesのサイズに関しては、複数ディレクトリがある際に、最もサンプル数が小さいディレクトリに合わせる必要有
 pcap_path, dataset_save_path, samples, features, dataset_level = "../datasets/VPN/packet/", "../datasets/VPN/result/", [14], ["payload"], "packet"
 
 ##実験コード##
