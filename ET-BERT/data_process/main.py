@@ -178,6 +178,7 @@ def write_dataset_tsv(data,label,file_dir,type):
 
 def unlabel_data(label_data):
     nolabel_data = ""
+    csv.field_size_limit(sys.maxsize)
     with open(label_data,newline='') as f:
         data = csv.reader(f,delimiter='\t')
         for row in data:
