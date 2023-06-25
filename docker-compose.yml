@@ -4,17 +4,21 @@ services:
     build:
       context: .
       dockerfile: dockerfile
-    environment:
-      - ENV_VAR=value
-    env_file:
-      - proxy.env
+      args:
+        - http_tmp=$http_proxy
+        - https_tmp=$https_proxy
     volumes:
       - ./ET-BERT:/ET-BERT
+    working_dir: /ET-BERT
     command: /bin/bash
+    env_file:
+      - proxy.env
     tty: true
     stop_signal: SIGINT
     deploy:
       resources:
+        limits:
+          memory: 24G
         reservations:
           devices:
             - capabilities: [gpu]
