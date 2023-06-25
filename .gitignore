@@ -1,3 +1,11 @@
 *.tsv
 *.zip
+*.7z
+*.pcap
+
+
 ./proxy.env
+
+
+dataset.json
+picked_file_record
