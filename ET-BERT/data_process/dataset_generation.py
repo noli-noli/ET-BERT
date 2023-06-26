@@ -12,6 +12,7 @@ import pickle
 import random
 import binascii
 import operator
+import subprocess
 import numpy as np
 import pandas as pd
 import scapy.all as scapy
@@ -20,36 +21,36 @@ from flowcontainer.extractor import extract
 
 random.seed(40)
 
-word_dir = "I:/corpora/"
+word_dir = "../corpora/"
 word_name = "encrypted_burst.txt"
 
 def convert_pcapng_2_pcap(pcapng_path, pcapng_file, output_path):
     
     pcap_file = output_path + pcapng_file.replace('pcapng','pcap')
-    cmd = "I:\\editcap.exe -F pcap %s %s"
+    cmd = "wine ./editset/editcap.exe -F pcap %s %s"
     command = cmd%(pcapng_path+pcapng_file, pcap_file)
     os.system(command)
     return 0
 
 def split_cap(pcap_path, pcap_file, pcap_name, pcap_label='', dataset_level = 'flow'):
     
-    if not os.path.exists(pcap_path + "\\splitcap"):
-        os.mkdir(pcap_path + "\\splitcap")
+    if not os.path.exists(pcap_path + "/splitcap"):
+        os.mkdir(pcap_path + "/splitcap")
     if pcap_label != '':
-        if not os.path.exists(pcap_path + "\\splitcap\\" + pcap_label):
-            os.mkdir(pcap_path + "\\splitcap\\" + pcap_label)
-        if not os.path.exists(pcap_path + "\\splitcap\\" + pcap_label + "\\" + pcap_name):
-            os.mkdir(pcap_path + "\\splitcap\\" + pcap_label + "\\" + pcap_name)
+        if not os.path.exists(pcap_path + "/splitcap/" + pcap_label):
+            os.mkdir(pcap_path + "/splitcap/" + pcap_label)
+        if not os.path.exists(pcap_path + "/splitcap/" + pcap_label + "/" + pcap_name):
+            os.mkdir(pcap_path + "/splitcap/" + pcap_label + "/" + pcap_name)
    
-        output_path = pcap_path + "\\splitcap\\" + pcap_label + "\\" + pcap_name
+        output_path = pcap_path + "/splitcap/" + pcap_label + "/" + pcap_name
     else:
-        if not os.path.exists(pcap_path + "\\splitcap\\" + pcap_name):
-            os.mkdir(pcap_path + "\\splitcap\\" + pcap_name)
-        output_path = pcap_path + "\\splitcap\\" + pcap_name
+        if not os.path.exists(pcap_path + "/splitcap/" + pcap_name):
+            os.mkdir(pcap_path + "/splitcap/" + pcap_name)
+        output_path = pcap_path + "/splitcap/" + pcap_name
     if dataset_level == 'flow':
-        cmd = "I:\\SplitCap.exe -r %s -s session -o " + output_path
+        cmd = "mono SplitCap.exe -r %s -s session -o " + output_path
     elif dataset_level == 'packet':
-        cmd = "I:\\SplitCap.exe -r %s -s packets 1 -o " + output_path
+        cmd = "mono SplitCap.exe -r %s -s packets 1 -o " + output_path
     command = cmd%pcap_file
     os.system(command)
     return output_path
@@ -411,7 +412,6 @@ def generation(pcap_path, samples, features, splitcap = False, payload_length = 
                     shutil.copyfile(file, os.path.join(current_path, new_name))
 
 
-        print("!!!!!check point 2!!!!!")
         for dir in label_name_list:
             for p,dd,ff in os.walk(parent + "/" + dir):
                 #label_name_list内の各要素（ラベル名）に対してループを実行します。
@@ -610,8 +610,8 @@ def combine_dataset_json():
     return 0
 
 def pretrain_dataset_generation(pcap_path):
-    output_split_path = "I:\\dataset\\"
-    pcap_output_path = "I:\\dataset\\"
+    output_split_path = "test/7/"
+    pcap_output_path = "test/7/"
     
     if not os.listdir(pcap_output_path):
         print("Begin to convert pcapng to pcap.")
@@ -621,7 +621,7 @@ def pretrain_dataset_generation(pcap_path):
                     #print(_parent + file)
                     convert_pcapng_2_pcap(_parent, file, pcap_output_path)
                 else:
-                    shutil.copy(_parent+"\\"+file, pcap_output_path+file)
+                    shutil.copy(_parent+"/"+file, pcap_output_path+file)
     
     if not os.path.exists(output_split_path + "splitcap"):
         print("Begin to split pcap as session flows.")
@@ -633,7 +633,7 @@ def pretrain_dataset_generation(pcap_path):
     # burst sample
     for _p,_d,files in os.walk(output_split_path + "splitcap"):
         for file in files:
-            get_burst_feature(_p+"\\"+file, payload_len=64)
+            get_burst_feature(_p+"/"+file, payload_len=64)
     return 0
 
 def size_format(size):
@@ -643,7 +643,7 @@ def size_format(size):
 
 if __name__ == '__main__':
     # pretrain
-    pcap_path = "I:\\pcaps\\"
+    pcap_path = "7/"
     # tls 13 downstream
     #pcap_path, samples, features = "I:\\dataset\\labeled\\", 500, ["payload","length","time","direction","message_type"]
     #X,Y = generation(pcap_path, samples, features, splitcap=False)
