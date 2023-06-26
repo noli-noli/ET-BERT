@@ -5,7 +5,8 @@ ARG https_tmp
 ENV http_proxy=$http_tmp
 ENV https_proxy=$https_tmp
 
-RUN apt-get update --fix-missing && apt-get install -y python3 python3-pip git screen tmux
+RUN apt-get update --fix-missing && apt-get install -y python3 python3-pip git screen tmux wine mono-runtime
+RUN dpkg --add-architecture i386 && apt-get update && apt-get install wine3
 
 COPY ET-BERT/requirements.txt /tmp
 RUN pip3 install -r /tmp/requirements.txt
