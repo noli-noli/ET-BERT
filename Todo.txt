@@ -1,14 +1,31 @@
-ET-BERT : CSVで読み込む段階でサイズフローがおきる問題の解決策を模索中
-ET-BERT-1 : augumaデータセットをコーパスに変換中。
+ET-BERT : CSVで読み込む段階でサイズフローがおきる問題の解決策を模索中 > 仕方なし？(2023/6/26)
+ET-BERT-1 : augumaデータセットをコーパスに変換中。 > セッション毎のデータセットの生成が必要の為、中止
+
 
 main.py : samplesのサイズに関しては、複数ディレクトリがある際に、最もサンプル数が小さいディレクトリに合わせる必要有
-tsvに記載されるクラス名は、ディレクトリ名がそのまま使われる。また、ディレクトリ名は自然数である必要あり。
+tsvに記載されるクラス名は、ディレクトリ名がそのまま使われる。また、ディレクトリ名は自然数である必要あり。 > 名前は使われない。ディレクトリ毎に連番で使われる。
+
 
 ##検討事項##
 複数のデータセットで作成したtsvを結合する事は可能か？
 懸念点として、コーパスのサイズ相違はあるか？
 
+
 ##実験項目##
 攻撃種の分類
 非攻撃と攻撃の分類
 またはその混合
+
+#linuxで動かせない問題を解決##
+SplitCap.exe (flowの場合はセッション毎に、packetの場合はpacket毎に)
+editcap.exe (pcapngをpcapに変換するプログラム。linuxで実装する際は、対処のパケット種がpcapngか否かを定める必要がある)
+
+##セッションを分割。一時名を以下に##
+Capesand_EK > 0
+Estimated_Gate > 1
+Fallout_EK > 2
+PseudoGate_(EK_Redirection) > 3
+Redirection_PurpleFox_EK_(Estimated_Gate) > 4
+Redirection_RIG_EK_(Estimated_Gate) > 5
+Redirection_RIG_Exploit_Kit_(Estimated_Gate) > 6
+Spelevo_EK > 7
