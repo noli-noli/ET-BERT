@@ -17,8 +17,9 @@ services:
     stop_signal: SIGINT
     deploy:
       resources:
-        limits:
-          memory: 24G
+        #limits:
+        #  memory: 24G
         reservations:
           devices:
             - capabilities: [gpu]
+    shm_size: 12GB
