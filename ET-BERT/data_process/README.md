@@ -1,41 +1,41 @@
-## Description of processing PCAP files to generate dataset
-For PCAP data, it is recommended to clean it first. Since the program processing logic is not smooth, we detail the data pre-processing for pre-training and fine-tuning as followed.
+## データセットを生成するための PCAP ファイルの処理の説明
+PCAP データの場合は、最初にクリーンアップすることをお勧めします。 プログラム処理ロジックはスムーズではないため、事前トレーニングと微調整のためのデータの前処理を次のように詳しく説明します。
 
-### Pre-training Stage
-*Main Program*: dataset_generation.py
+### トレーニング前の段階
+*メインプログラム*: dataset_generation.py
 
-*Functions*: pretrain_dataset_generation, get_burst_feature
+*関数*: pretrain_dataset_generation、get_burst_feature
 
-1. Initialization. 
-Set the variable `pcap_path` (line:616) as the directory of PCAP data to be processed. 
-Set the variable `word_dir` (line:23) and `word_name` (line:24) as the storage directory of pre-training daraset.
+1. 初期化。
+変数 `pcap_path` (行:616) を処理する PCAP データのディレクトリとして設定します。
+変数`word_dir`(行:23)と変数`word_name`(行:24)を事前学習ダラセットの格納ディレクトリとして設定します。
 
-2. Pre-process PCAP. 
-Set the variable `output_split_path` (line:583) and `pcap_output_path` (line:584). 
-The `pcap_output_path` indicates the storage directory where the pcapng format of PCAP data is converted to pcap format. 
-The `output_split_path` represents the storage directory for PCAP data slicing into session format. 
+2. PCAP を前処理します。
+変数 `output_split_path` (行:583) と `pcap_output_path` (行:584) を設定します。
+「pcap_output_path」は、PCAP データの pcapng 形式を pcap 形式に変換する格納ディレクトリを示します。
+「output_split_path」は、PCAP データをセッション形式にスライスするためのストレージ ディレクトリを表します。
 
-3. Gnerate Pre-training Datasets. 
-Following the completion of PCAP data processing, the program generates a pre-training dataset composed of BURST.
+3. 事前トレーニング データセットを生成します。
+PCAP データ処理の完了後、プログラムは BURST で構成される事前トレーニング データセットを生成します。
 
-### Fine-tuning Stage
-*Main Program*: main.py
+### 微調整段階
+*メインプログラム*: main.py
 
-*Functions*: data_preprocess.py, dataset_generation.py, open_dataset_deal.py, dataset_cleanning.py
+*関数*: data_preprocess.py、dataset_generation.py、open_dataset_deal.py、dataset_cleanning.py
 
-The key idea of the fine-tuning phase when processing public PCAP datasets is to first distinguish folders for different labeled data in the dataset, then perform session slicing on the data, and finally generate packet-level or flow-level datasets according to sample needs.
+パブリック PCAP データセットを処理する際の微調整フェーズの主な考え方は、まずデータセット内のさまざまなラベル付きデータのフォルダーを区別し、次にデータに対してセッション スライスを実行し、最後にサンプルのニーズに応じてパケット レベルまたはフロー レベルのデータセットを生成することです。 。
 
-**Note:** Due to the complexity of the possible existence of raw PCAP data, it is recommended that the following steps be performed to check the code execution when it reports an error.
+**注意:** 生の PCAP データが存在する可能性は複雑であるため、エラーが報告された場合は、次の手順を実行してコードの実行を確認することをお勧めします。
 
-1. Initialization. 
-`pcap_path`, `dataset_save_path`, `samples`, `features`, `dataset_level` (line:28) are the basis variables, which represent the original data directory, the stored generated data directory, the number of samples, the feature type, and the data level. `open_dataset_not_pcap` (line:215)  represents the processing of converting PCAP data to pcap format, e.g. pcapng to pcap. 
-And `file2dir` (line:226) represents the generation of category directories to store PCAP data when a pcap file is a category. 
+1. 初期化。
+`pcap_path`、`dataset_save_path`、`samples`、`features`、`dataset_level` (行:28) は基底変数であり、元のデータ ディレクトリ、保存されている生成データ ディレクトリ、サンプル数、特徴タイプを表します。 、データレベル。 `open_dataset_not_pcap` (行:215) は、PCAP データを pcap 形式に変換する処理を表します。 pcapng から pcap へ。
+また、`file2dir` (行:226) は、pcap ファイルがカテゴリである場合に、PCAP データを格納するためのカテゴリ ディレクトリの生成を表します。
 
-2. Pre-process. 
-The data pre-processing is primarily to split the PCAP data in the directory into session data. 
-Please set the `splitcap_finish` parameter to 0 to initialize the sample number array, and the value of `sample` set at this time should not exceed the minimum number of samples. 
-Then you can set `splitcap=True` (line:54) and run the code for splitting PCAP data. The splitted sessions will be saved in `pcap_path\\splitcap`.
+2. 前処理。
+データの前処理は主に、ディレクトリ内の PCAP データをセッション データに分割することです。
+`splitcap_finish` パラメータを 0 に設定してサンプル数配列を初期化してください。このとき設定される `sample` の値は最小サンプル数を超えてはなりません。
+次に、`splitcap=True` (行:54) を設定し、PCAP データを分割するコードを実行します。 分割されたセッションは `pcap_path\\splitcap` に保存されます。
 
-3. Generation. 
-After data pre-processing is completed, variables need to be changed for generating fine-tuned training data. The `pcap_path` should be the path of splitted data and set 
-`splitcap=False`. Now the `sample` can be unrestricted by the minimum sample size. The `open_dataset_not_pcap` and `file2dir` should be False. Then the dataset for fine-tuning will be generated and saved in `dataset_save_path`. 
+3. 世代。
+データの前処理が完了したら、微調整されたトレーニング データを生成するために変数を変更する必要があります。 `pcap_path` は分割されたデータのパスであり、設定する必要があります。
+「splitcap=False」。 これで、「サンプル」は最小サンプル サイズによって制限されなくなります。 `open_dataset_not_pcap` と `file2dir` は False にする必要があります。 すると、微調整用のデータセットが生成され、`dataset_save_path`に保存されます。
