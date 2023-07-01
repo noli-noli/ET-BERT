@@ -1,6 +1,7 @@
 *.tsv
 *.zip
 *.7z
+*.saz
 *.pcap
 
 
