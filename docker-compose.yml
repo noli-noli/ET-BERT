@@ -4,21 +4,29 @@ services:
     build:
       context: .
       dockerfile: dockerfile
+      #dockerfileにproxyアドレスを引数として渡す
       args:
         - http_tmp=$http_proxy
         - https_tmp=$https_proxy
+    #カレントディレクトリ上にあるET-BERTをコンテナ内の/ET-BERTにマウント
     volumes:
       - ./ET-BERT:/ET-BERT
+    #ワーキングディレクトリを/ET-BERTに設定
     working_dir: /ET-BERT
+    #コンテナ内でbashを起動
     command: /bin/bash
+    #proxyアドレスを読込む
     env_file:
       - proxy.env
     tty: true
     stop_signal: SIGINT
     deploy:
       resources:
-        limits:
-          memory: 24G
+        #コンテナにメモリの上限を設定。使用する際は以下2行のコメントアウトを外す
+        #limits:
+        #  memory: 24G
         reservations:
           devices:
             - capabilities: [gpu]
+    #cudaを使用する際に発生するcore dumpを防ぐ為に設定
+    shm_size: 12GB
