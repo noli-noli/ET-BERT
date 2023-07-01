@@ -13,10 +13,13 @@ ENV TZ=Asia/Tokyo
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 #コンテナ内で使用するパッケージをインストール
-RUN apt update --fix-missing && apt install python3 python3-pip git screen tmux wine mono-runtime tshark -y
+RUN apt update --fix-missing && apt install python3 python3-pip git screen tmux wine mono-runtime -y
 
 #wineで32bitアプリを動かす為の設定
 RUN dpkg --add-architecture i386 && apt-get update && apt-get install wine32 -y
+
+RUN apt install -y --allow-change-held-packages tshark
+
 
 #requirements.txtの内容をインストールする
 COPY ET-BERT/requirements.txt /tmp
