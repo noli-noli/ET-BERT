@@ -1,6 +1,4 @@
-FROM nvidia/cuda:11.7.1-cudnn8-devel-ubuntu20.04
-#以下1行はpull出来なくなった為、一旦コメントアウト
-#FROM nvidia/cuda:11.4.0-base-ubuntu20.04
+FROM nvidia/cuda:11.4.3-base-ubuntu20.04
 
 #docker-composeから受け取った引数(proxyのアドレス)を環境変数にセット
 ARG http_tmp
@@ -18,7 +16,8 @@ RUN apt update --fix-missing && apt install python3 python3-pip git screen tmux 
 #wineで32bitアプリを動かす為の設定
 RUN dpkg --add-architecture i386 && apt-get update && apt-get install wine32 -y
 
-RUN apt install -y --allow-change-held-packages tshark
+#tsharkを強引にインストールする
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y tshark
 
 
 #requirements.txtの内容をインストールする
