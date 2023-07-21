@@ -428,6 +428,11 @@ def generation(pcap_path, samples, features, splitcap = False, payload_length = 
     label_id = {}
     for index in range(len(label_name_list)):
         label_id[label_name_list[index]] = index
+    
+    #labelとディレクトリの対応を"result.json"として保存
+    with open(dataset_save_path + "result.json", "w") as f:
+        tmp_label_id = {v: k for k, v in label_id.items()}
+        json.dump(tmp_label_id,fp=f,ensure_ascii=False,indent=4)
 
     r_file_record = []
     print("\nBegin to generate features.")
