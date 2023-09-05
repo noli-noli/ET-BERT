@@ -1,6 +1,7 @@
 version: "3"
 services:
   gp20a051_cuda-11-4:
+    container_name: ET-BERT
     build:
       context: .
       dockerfile: dockerfile
