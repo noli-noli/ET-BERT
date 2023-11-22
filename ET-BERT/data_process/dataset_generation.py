@@ -22,7 +22,7 @@ from flowcontainer.extractor import extract
 random.seed(40)
 
 word_dir = "../corpora/"
-word_name = "encrypted_burst.txt"
+word_name = "auguma-PseudoGate.txt"
 
 def convert_pcapng_2_pcap(pcapng_path, pcapng_file, output_path):
     
@@ -391,7 +391,7 @@ def generation(pcap_path, samples, features, splitcap = False, payload_length = 
         #確認用
         #print("check" + parent)
         #print("check" + str(files))
-        #print(dirs)
+        print(dirs)
         if label_name_list == []:
             #ディレクトリ内のサブディレクトリ名をラベル名として収集し、label_name_listに格納します。
             label_name_list.extend(dirs)
@@ -429,12 +429,11 @@ def generation(pcap_path, samples, features, splitcap = False, payload_length = 
     for index in range(len(label_name_list)):
         label_id[label_name_list[index]] = index
     
-    #labelとディレクトリの対応を"result.json"として保存
     with open(dataset_save_path + "result.json", "w") as f:
         tmp_label_id = {v: k for k, v in label_id.items()}
         json.dump(tmp_label_id,fp=f,ensure_ascii=False,indent=4)
-
     r_file_record = []
+
     print("\nBegin to generate features.")
 
     label_count = 0
@@ -614,28 +613,33 @@ def combine_dataset_json():
         json.dump(dataset, fp=f, ensure_ascii=False, indent=4)
     return 0
 
-def pretrain_dataset_generation(pcap_path):
-    output_split_path = "test/7/"
-    pcap_output_path = "test/7/"
-    
+def pretrain_dataset_generation(pcap_path,output_split_path):
+    #pcap_output_path = "../datasets/auguma-PseudoGate/output/"
+    """
+    #特に必要ないのでコメントアウト
     if not os.listdir(pcap_output_path):
         print("Begin to convert pcapng to pcap.")
         for _parent,_dirs,files in os.walk(pcap_path):
             for file in files:
+                #以下はpcapngをpcapに変換するコードである。
+                #がしかし特に必要ないのでコメントアウトしておく。
                 if 'pcapng' in file:
+                    pass
                     #print(_parent + file)
-                    convert_pcapng_2_pcap(_parent, file, pcap_output_path)
+                    #convert_pcapng_2_pcap(_parent, file, pcap_output_path)
                 else:
-                    shutil.copy(_parent+"/"+file, pcap_output_path+file)
-    
+                    pass
+                    #pcapngではない場合、そのままコピーされる。以下元のコード
+                    #shutil.copy(_parent+"/"+file, pcap_output_path+file)
+    """
     if not os.path.exists(output_split_path + "splitcap"):
         print("Begin to split pcap as session flows.")
         
-        for _p,_d,files in os.walk(pcap_output_path):
+        for _p,_d,files in os.walk(pcap_path):
             for file in files:
                 split_cap(output_split_path,_p+file,file)
     print("Begin to generate burst dataset.")
-    # burst sample
+    # バーストデータセットの生成
     for _p,_d,files in os.walk(output_split_path + "splitcap"):
         for file in files:
             get_burst_feature(_p+"/"+file, payload_len=64)
@@ -648,12 +652,13 @@ def size_format(size):
 
 if __name__ == '__main__':
     # pretrain
-    pcap_path = "7/"
+    pcap_path = "../datasets/auguma-Redirection_RIG_EK/packet/"
+    output_path = "../datasets/auguma-Redirection_RIG_EK/output"
     # tls 13 downstream
     #pcap_path, samples, features = "I:\\dataset\\labeled\\", 500, ["payload","length","time","direction","message_type"]
     #X,Y = generation(pcap_path, samples, features, splitcap=False)
     # pretrain data
-    pretrain_dataset_generation(pcap_path)
+    pretrain_dataset_generation(pcap_path,output_path)
     #print("X:%s\tx:%s\tY:%s"%(len(X),len(X[0]),len(Y)))
     # combine dataset.json
     #combine_dataset_json()

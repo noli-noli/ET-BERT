@@ -22,10 +22,10 @@ import data_preprocess
 import open_dataset_deal
 
 _category = 120 # dataset class
-dataset_dir = "../datasets/" # ダインチューニングのためのデータセットを保存するためのパス
+dataset_dir = "../datasets/auguma-all/tsv/" # ダインチューニングのためのデータセットを保存するためのパス
 
 #samplesのサイズに関しては、複数ディレクトリがある際に、最もサンプル数が小さいディレクトリに合わせる必要有
-pcap_path, dataset_save_path, samples, features, dataset_level = "../datasets/VPN/packet/", "../datasets/VPN/result/", [14], ["payload"], "packet"
+pcap_path, dataset_save_path, samples, features, dataset_level = "../datasets/auguma-all/packet/", "../datasets/auguma-all/result/", [500], ["payload"], "flow" #"packet"
 
 ##実験コード##
 #print(os.path.isdir(pcap_path))
@@ -207,7 +207,7 @@ def count_label_number(samples):
     new_samples = samples * _category
     
     if 'splitcap' not in pcap_path:
-        dataset_length, labels = open_dataset_deal.statistic_dataset_sample_count(pcap_path + 'splitcap\\')
+        dataset_length, labels = open_dataset_deal.statistic_dataset_sample_count(pcap_path + 'splitcap/')
     else:
         dataset_length, labels = open_dataset_deal.statistic_dataset_sample_count(pcap_path)
 
@@ -225,9 +225,9 @@ if __name__ == '__main__':
         for p,d,f in os.walk(pcap_path):
             for file in f:
                 target_file = file.replace('.','_new.')
-                open_dataset_deal.file_2_pcap(p+"\\"+file, p+"\\"+target_file)
+                open_dataset_deal.file_2_pcap(p+"/"+file, p+"/"+target_file)
                 if '_new.pcap' not in file:
-                    os.remove(p+"\\"+file)
+                    os.remove(p+"/"+file)
 
     file2dir = 0
     if file2dir:

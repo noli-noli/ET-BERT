@@ -20,11 +20,11 @@ tls_date = [20210301,20210808]
 pcap_name = "app_A.pcap"
 #pcap_name = "merge.pcap"
 
-word_dir = "corpora/"
-word_name = "encrypted_traffic_burst.txt"
+word_dir = "../corpora/"
+word_name = "auguma-PseudoGate_corpus.txt"
 
-vocab_dir = "models/"
-vocab_name = "encryptd_vocab_all.txt"
+vocab_dir = "../models/"
+vocab_name = "auguma-PseudoGate_vocab.txt"
 
 def pcap_preprocess():
     

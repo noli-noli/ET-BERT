@@ -1,0 +1,22 @@
+{
+	"folders": [
+		{
+			"path": "../../../../huggingface_transformers"
+		},
+		{
+			"path": "../../../datasets"
+		},
+		{
+			"path": "../.."
+		},
+		{
+			"path": "../../../ET-BERT"
+		},
+		{
+			"path": "../../../ET-BERT-2"
+		}
+	],
+	"settings": {
+		"git.ignoreLimitWarning": true
+	}
+}

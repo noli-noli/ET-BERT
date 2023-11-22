@@ -17,6 +17,7 @@ from uer.model_saver import save_model
 from uer.opts import finetune_opts
 import tqdm
 import numpy as np
+import os
 
 class Classifier(nn.Module):
     def __init__(self, args):
@@ -221,6 +222,7 @@ def evaluate(args, dataset, print_confusion_matrix=False):
         correct += torch.sum(pred == gold).item()
 
     if print_confusion_matrix:
+        os.makedirs("/data2/lxj/pre-train/results", exist_ok=True)
         print("Confusion matrix:")
         print(confusion)
         cf_array = confusion.numpy()
